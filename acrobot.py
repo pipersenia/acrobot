@@ -9,7 +9,15 @@ def hello():
 
 @app.route('/acrobot', methods=['POST'])
 def slash():
-    return "Maadu"
+    return [
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "Wonder what *<>* means?"
+            }
+        }
+    ]
 
 
 if __name__ == '__main__':
