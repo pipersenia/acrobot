@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
@@ -10,13 +10,14 @@ def hello():
 
 @app.route('/acrobot', methods=['POST'])
 def slash():
+    print(request)
     return jsonify({
         "blocks": [
             {
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": "A message *with some bold text* and _some italicized text_."
+                    "text": "Wonder what ** means?"
                 }
             }
         ]
