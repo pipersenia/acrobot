@@ -1,23 +1,35 @@
 from flask import Flask, jsonify, request
+import gsheets
+import logging
+
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+ACRONYMS = None
 
-acronyms = {
-    'INT': 'Inter Milan',
-    'ASR': 'AS Roma'
-}
-
+ACRONYM_KEY = 'Acronym'
+DEFINITION_KEY = 'Definition'
 
 @app.route('/')
 def hello():
-    return "Amme, I love you! - Maadhav"
+    return "Acrobot - expanding acronyms one word at a time."
+
+
+def lookup_definition(term):
+    keys = ACRONYMS.keys()
+    if term in keys:
+        return ACRONYMS[term]
+    elif term.lower() in keys:
+        return ACRONYMS[term.lower()]
+    elif term.upper() in keys:
+        return ACRONYMS[term.upper()]
+    else:
+        return None
 
 
 @app.route('/acrobot', methods=['POST'])
 def slash():
     # add token validation
-    print("Received request")
-    print(request.form)
     text = request.form.get('text', None)
     if text is None:
         return "You didn't ask for any term!"
@@ -37,18 +49,19 @@ def slash():
             ]
         })
     # last term is the acronym
-    acronym = text.split()[-1]
-    if acronym in acronyms:
-        definition = acronyms[acronym]
-    else:
-        definition = "Unable to look up meaning for this acronym. <Help message for adding>"
+    query_term = text.split()[-1]
+    if ACRONYMS is None:
+        fetch_acronyms()
+    definition = lookup_definition(term=query_term)
+    if definition is None:
+        definition = "Acronym {} not found in database.".format(query_term)
     return jsonify({
         "blocks": [
             {
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": ":thinking_face: *{acronym}*".format(acronym=acronym)
+                    "text": ":thinking_face: *{acronym}*".format(acronym=query_term)
                 }
             },
             {
@@ -65,6 +78,22 @@ def slash():
         ]
     }
     )
+
+
+def normalize(records):
+    master = {}
+    for rec in records:
+        master[rec[ACRONYM_KEY]] = rec[DEFINITION_KEY]
+    return master
+
+
+def fetch_acronyms():
+    global ACRONYMS
+    if ACRONYMS is None:
+        db_client = gsheets.connect()
+        records = gsheets.get_records(db_client)
+        # normalize the list of records in sheets
+        ACRONYMS = normalize(records=records)
 
 
 if __name__ == '__main__':
