@@ -35,6 +35,6 @@ class MyTestCase(unittest.TestCase):
         actual = lookup_definition('aSr')
         self.assertEqual(actual, 'AS ROMA')
 
-        
+
 if __name__ == '__main__':
     unittest.main()
