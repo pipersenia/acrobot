@@ -14,11 +14,6 @@ def connect():
 
 
 def get_records(client):
-    """
-        
-    :param client: gspread client.
-    :return:
-    """
     sheet = client.open("Acronyms").sheet1
     # Extract and print all of the values
     return sheet.get_all_records()
