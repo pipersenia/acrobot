@@ -14,20 +14,11 @@ def connect():
 
 
 def get_records(client):
-    # Find a workbook by name and open the first sheet
-    # Make sure you use the right name here.
+    """
+        
+    :param client: gspread client.
+    :return:
+    """
     sheet = client.open("Acronyms").sheet1
     # Extract and print all of the values
     return sheet.get_all_records()
-
-def main():
-    data = [{'Acronym': 'ASR', 'Fullform': 'AS Roma'}, {'Acronym': 'INT', 'Fullform': 'Inter Milan'}, {'Acronym': 'ACM', 'Fullform': 'AC Milan'}, {'Acronym': 'MAADU', 'Fullform': 'Maadhav'}]
-    master = {}
-    for rec in data:
-        master[rec['Acronym']] = rec['Fullform']
-    print(master)
-
-if __name__ == '__main__':
-    main()
-    client = connect()
-    print(get_records(client))
