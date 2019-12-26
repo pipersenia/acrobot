@@ -3,7 +3,9 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 
 SCOPE = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-SECRETS_FILE = 'client_secret.json'
+
+# Google service account secrets file
+SECRETS_FILE = 'sample_secret.json'
 
 
 def connect():
